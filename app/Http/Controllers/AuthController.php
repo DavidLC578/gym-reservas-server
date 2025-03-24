@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -49,7 +50,11 @@ class AuthController extends Controller
         ]);
 
         try {
-            $token = JWTAuth::attempt($request->only('name', 'password'));
+            $credentials = $request->only('name', 'password');
+
+            if (!$token = Auth::guard('api')->attempt($credentials)) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
         } catch (Exception $e) {
             Log::error('Token generation error: ' . $e->getMessage());
             return response()->json([
@@ -60,6 +65,20 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'User logged in successfully',
             'token' => $token
+        ], 200);
+    }
+
+    public function me()
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+        return response()->json([
+            'user' => $user,
+            'role' => $user->getRoleNames()->first()
         ], 200);
     }
 }
