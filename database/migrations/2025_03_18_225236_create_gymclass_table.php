@@ -24,10 +24,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('class_user', function (Blueprint $table) {
+        Schema::create('gym_class_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('class_id')->constrained('gym_classes');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('gym_class_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

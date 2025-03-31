@@ -22,7 +22,7 @@ class ClassController extends Controller
     {
         // Retrieve all classes from the database
         $classes = GymClass::all();
-        
+
         // Return the list of classes as JSON response
         return response()->json($classes);
     }
@@ -38,7 +38,7 @@ class ClassController extends Controller
     {
         // Retrieve a class by ID from the database
         $class = GymClass::findOrFail($id);
-        
+
         // Return the class as JSON response
         return response()->json($class);
     }
@@ -59,7 +59,7 @@ class ClassController extends Controller
 
         // Create a new instance of GymClass model
         $class = new GymClass();
-        
+
         // Set class properties from the request data
         $class->name = $request->name;
         $class->description = $request->description;
@@ -97,7 +97,7 @@ class ClassController extends Controller
 
         // Retrieve a class by ID from the database
         $class = GymClass::findOrFail($id);
-        
+
         // Update class properties from the request data
         $class->name = $request->name;
         $class->description = $request->description;
@@ -134,7 +134,7 @@ class ClassController extends Controller
 
         // Retrieve a class by ID from the database
         $class = GymClass::findOrFail($id);
-        
+
         // Delete the class from the database
         $class->delete();
 
@@ -154,16 +154,16 @@ class ClassController extends Controller
     public function enroll(Request $request, $classId)
     {
         // Check if user is not authenticated or has admin/god role
-        if (Auth::check() && Auth::user()->hasAnyRole(['god', 'admin'])) {
+        if (!Auth::check()) {
             // Return unauthorized response if user has admin/god role
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         // Retrieve a class by ID from the database
         $class = GymClass::findOrFail($classId);
-        
+
         // Get the authenticated user
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
 
         // Check if user is already enrolled in the class
         if ($class->users()->where('user_id', $user->id)->exists()) {
@@ -216,7 +216,7 @@ class ClassController extends Controller
 
         // Retrieve a class by ID from the database with its participants
         $class = GymClass::with('users')->findOrFail($classId);
-        
+
         // Return a success response with the class and its participants
         return response()->json([
             'class' => $class,
@@ -240,7 +240,7 @@ class ClassController extends Controller
 
         // Retrieve a class by ID from the database
         $class = GymClass::findOrFail($classId);
-        
+
         // Get the authenticated user
         $user = Auth::user();
 

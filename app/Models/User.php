@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -58,5 +59,14 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * The gym classes the user is enrolled in.
+     */
+    public function gymClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(GymClass::class, 'gym_class_user', 'user_id', 'gym_class_id')
+            ->withTimestamps();
     }
 }

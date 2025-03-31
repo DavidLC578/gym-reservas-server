@@ -24,6 +24,8 @@ Route::put('/classes/{id}', [ClassController::class, 'update']);
 Route::delete('/classes/{id}', [ClassController::class, 'delete']);
 
 // Routes for class enrollment
-Route::post('/classes/{classId}/enroll', [ClassController::class, 'enroll']);
-Route::get('/classes/{classId}/participants', [ClassController::class, 'getClassParticipants']);
-Route::delete('/classes/{classId}/cancel-enrollment', [ClassController::class, 'cancelEnrollment']);
+Route::middleware(['auth:api'])->group(function () {
+    Route::post('/classes/{classId}/enroll', [ClassController::class, 'enroll']);
+    Route::get('/classes/{classId}/participants', [ClassController::class, 'getClassParticipants']);
+    Route::delete('/classes/{classId}/cancel-enrollment', [ClassController::class, 'cancelEnrollment']);
+});
